@@ -1,0 +1,402 @@
+<title>NutriPlan Nora</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root {
+    --bg: #fdfcfb;
+    --surface: #ffffff;
+    --fg: #2d3436;
+    --accent: #3498db;
+    --accent-soft: #ebf5fb;
+    --text-muted: #636e72;
+    --border: #dfe6e9;
+    --protein: #3498db;
+    --fat: #f1c40f;
+    --carbs: #e67e22;
+    --font-display: 'Lexend', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1c1e;
+      --surface: #2d2f31;
+      --fg: #e9ecef;
+      --accent: #3498db;
+      --accent-soft: #1b2a3a;
+      --text-muted: #adb5bd;
+      --border: #3f4245;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1a1c1e;
+    --surface: #2d2f31;
+    --fg: #e9ecef;
+    --accent: #3498db;
+    --accent-soft: #1b2a3a;
+    --text-muted: #adb5bd;
+    --border: #3f4245;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    margin: 0;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 2rem;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    margin-top: 0;
+  }
+
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-tile {
+    background: var(--bg);
+    padding: 1rem;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .macro-bar {
+    height: 12px;
+    width: 100%;
+    background: var(--border);
+    border-radius: 6px;
+    display: flex;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+
+  .macro-segment { height: 100%; }
+
+  .legend {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .day-selector {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 12px;
+    margin-bottom: 1.5rem;
+    scrollbar-width: none;
+  }
+  .day-selector::-webkit-scrollbar { display: none; }
+
+  .day-btn {
+    flex: 0 0 auto;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-display);
+  }
+
+  .day-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+  }
+
+  .meal-card {
+    display: flex;
+    gap: 1rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .meal-card:last-child { border-bottom: none; }
+
+  .meal-icon { font-size: 2rem; min-width: 50px; text-align: center; }
+
+  .meal-info h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+
+  .meal-info p { font-size: 1.1rem; color: var(--text-muted); margin: 0; }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .shopping-category {
+    background: var(--bg);
+    padding: 1rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .shopping-category h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--accent);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .shopping-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .hidden { display: none !important; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@500;700&display=swap">
+
+<div class="container">
+  <div class="header">
+    <h1>NutriPlan Nora</h1>
+    <p>Plan Final Seguro: Sin Alérgenos</p>
+  </div>
+
+  <div class="card">
+    <div class="badge">Objetivo Diario Fijo</div>
+    <div class="stat-grid">
+      <div class="stat-tile" style="grid-column: span 2; background: var(--accent-soft);">
+        <span class="stat-label">Calorías Totales</span>
+        <span class="stat-value" style="color: var(--accent); font-size: 2.5rem;">1449 <small style="font-size: 1rem;">kcal</small></span>
+      </div>
+      <div class="stat-tile">
+        <span class="stat-label" style="color: var(--protein);">Proteínas</span>
+        <span class="stat-value">50g</span>
+      </div>
+      <div class="stat-tile">
+        <span class="stat-label" style="color: var(--fat);">Grasas</span>
+        <span class="stat-value">40g</span>
+      </div>
+      <div class="stat-tile" style="grid-column: span 2;">
+        <span class="stat-label" style="color: var(--carbs);">Carbohidratos</span>
+        <span class="stat-value">222g</span>
+      </div>
+    </div>
+
+    <div class="macro-bar">
+      <div class="macro-segment" style="width: 16%; background: var(--protein);"></div>
+      <div class="macro-segment" style="width: 13%; background: var(--fat);"></div>
+      <div class="macro-segment" style="width: 71%; background: var(--carbs);"></div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="dot" style="background: var(--protein);"></span> Proteína</div>
+      <div class="legend-item"><span class="dot" style="background: var(--fat);"></span> Grasa</div>
+      <div class="legend-item"><span class="dot" style="background: var(--carbs);"></span> Carbs</div>
+    </div>
+  </div>
+
+  <div class="meal-plan">
+    <h2 style="text-align: center; margin-bottom: 1rem;">📅 Plan Semanal (2 Comidas)</h2>
+
+    <div class="day-selector">
+      <button class="day-btn active" onclick="switchDay('dayA', this)">Día A</button>
+      <button class="day-btn" onclick="switchDay('dayB', this)">Día B</button>
+      <button class="day-btn" onclick="switchDay('dayC', this)">Día C</button>
+      <button class="day-btn" onclick="switchDay('dayD', this)">Día D</button>
+      <button class="day-btn" onclick="switchDay('dayE', this)">Día E</button>
+      <button class="day-btn" onclick="switchDay('dayF', this)">Día F</button>
+      <button class="day-btn" onclick="switchDay('dayG', this)">Día G</button>
+    </div>
+
+    <!-- Día A -->
+    <div id="dayA" class="card">
+      <div class="meal-card">
+        <div class="meal-icon">🍚</div>
+        <div class="meal-info"><h3>Almuerzo</h3><p>150g Pollo a la plancha con 300g de arroz integral y aceite de oliva.</p></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🍎</div>
+        <div class="meal-info"><h3>Cena</h3><p>150g Pechuga de pavo con 250g de patata al horno y media manzana.</p></div>
+      </div>
+    </div>
+
+    <!-- Día B -->
+    <div id="dayB" class="card hidden">
+      <div class="meal-card">
+        <div class="meal-icon">🥘</div>
+        <div class="meal-info"><h3>Almuerzo</h3><p>150g Pavo a la plancha con 300g de arroz integral.</p></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🍝</div>
+        <div class="meal-info"><h3>Cena</h3><p>150g Pollo troceado con 200g de pasta integral y media pera.</p></div>
+      </div>
+    </div>
+
+    <!-- Día C -->
+    <div id="dayC" class="card hidden">
+      <div class="meal-card">
+        <div class="meal-icon">🍲</div>
+        <div class="meal-info"><h3>Almuerzo</h3><p>Lentejas cocidas (300g) con jamón serrano magro.</p></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🥚</div>
+        <div class="meal-info"><h3>Cena</h3><p>Tortilla de 3 huevos con 3 tostadas integrales y media manzana.</p></div>
+      </div>
+    </div>
+
+    <!-- Día D -->
+    <div id="dayD" class="card hidden">
+      <div class="meal-card">
+        <div class="meal-icon">🍚</div>
+        <div class="meal-info"><h3>Almuerzo</h3><p>150g Pollo con 300g de arroz basmati integral.</p></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🥔</div>
+        <div class="meal-info"><h3>Cena</h3><p>150g Pavo con 250g de puré de patata y media manzana.</p></div>
+      </div>
+    </div>
+
+    <!-- Día E -->
+    <div id="dayE" class="card hidden">
+      <div class="meal-card">
+        <div class="meal-icon">🥘</div>
+        <div class="meal-info"><h3>Almuerzo</h3><p>Garbanzos cocidos (300g) con 120g de pechuga de pavo.</p></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🥩</div>
+        <div class="meal-info"><h3>Cena</h3><p>150g Ternera magra con 220g de arroz integral y media pera.</p></div>
+      </div>
+    </div>
+
+    <!-- Día F -->
+    <div id="dayF" class="card hidden">
+      <div class="meal-card">
+        <div class="meal-icon">🍚</div>
+        <div class="meal-info"><h3>Almuerzo</h3><p>150g Pollo con 300g de arroz integral.</p></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🥔</div>
+        <div class="meal-info"><h3>Cena</h3><p>150g Pavo con 250g de patata asada y media manzana.</p></div>
+      </div>
+    </div>
+
+    <!-- Día G -->
+    <div id="dayG" class="card hidden">
+      <div class="meal-card">
+        <div class="meal-icon">🥘</div>
+        <div class="meal-info"><h3>Almuerzo</h3><p>Pasta integral (250g cocida) con 150g de pollo.</p></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🍚</div>
+        <div class="meal-info"><h3>Cena</h3><p>150g Pechuga de pavo con 220g de arroz integral y media pera.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shopping-list">
+    <h2 style="text-align: center; margin-bottom: 1.5rem;">🛒 Compra Semanal Segura</h2>
+    <div class="shopping-grid">
+      <div class="shopping-category">
+        <h4>🍎 Frutas Seguras</h4>
+        <div class="shopping-item"><input type="checkbox"> Manzanas y Peras.</div>
+      </div>
+      <div class="shopping-category">
+        <h4>🥩 Proteínas y Lácteos</h4>
+        <div class="shopping-item"><input type="checkbox"> Pechuga de Pollo y Pavo (aprox 1.2kg c/u).</div>
+        <div class="shopping-item"><input type="checkbox"> Ternera magra, Jamón serrano magro.</div>
+        <div class="shopping-item"><input type="checkbox"> Huevos.</div>
+      </div>
+      <div class="shopping-category">
+        <h4>🌾 Granos y Legumbres</h4>
+        <div class="shopping-item"><input type="checkbox"> Arroz Integral, Pasta Integral.</div>
+        <div class="shopping-item"><input type="checkbox"> Pan Integral.</div>
+        <div class="shopping-item"><input type="checkbox"> Lentejas y Garbanzos cocidos.</div>
+        <div class="shopping-item"><input type="checkbox"> Patatas.</div>
+      </div>
+      <div class="shopping-category">
+        <h4>🍯 Despensa</h4>
+        <div class="shopping-item"><input type="checkbox"> Miel, Canela, Aceite de Oliva.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchDay(dayId, btn) {
+    const days = ['dayA', 'dayB', 'dayC', 'dayD', 'dayE', 'dayF', 'dayG'];
+    days.forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    document.getElementById(dayId).classList.remove('hidden');
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
